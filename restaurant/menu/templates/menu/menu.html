@@ -1,0 +1,189 @@
+{% extends 'menu/main.html' %}
+{% load static %}
+{% load menu_tags %}
+{% csrf_token %}
+
+{% block navitems %}
+<div class="navbar sticky-top  justify-content-center " id="navbar-1">
+  <a class="ml-5 mr-5 font-weight-bolder text-success" href="#Pinocchio Special">SPECIAL</a>
+  <a class="ml-5 mr-5 font-weight-bolder text-success" href="#Regular Pizza">REGULAR PIZZA</a>
+  <a class="ml-5 mr-5 font-weight-bolder text-success" href="#Sicilian Pizza">SICILIAN PIZZA</a>
+  <a class="ml-5 mr-5 font-weight-bolder text-success" href="#Subs">SUBS</a>
+  <a class="ml-5 mr-5 font-weight-bolder text-success" href="#Pasta">PASTA</a>
+  <a class="ml-5 mr-5 font-weight-bolder text-success" href="#Salads">SALADS</a>
+  <a class="ml-5 mr-5 font-weight-bolder text-success" href="#Dinner Platters">DINNER PLATTERS</a>
+</div>
+{% endblock navitems %}
+
+{% block content %}
+
+
+    {% for items in item_list %}
+    <a id="{{ items.0.item_type }}" style="padding-top: 94px;"></a>
+    <br><br>
+    <h2  style="border-bottom: 1px solid rgb(246, 25, 62);"><span class=" badge-pill badge-danger ml-4">{{ items.0.item_type}}</span></h2><br>
+    <div class="row">
+    {% for item in items %}           
+        {% if item.item_type in customize %}
+            <div class="col-lg-4 p-4">
+                <div class="box-element-product">
+                    <div class="card">
+                        <img class="card-img-top" src="{{ item.imageURL }}" style="width:100%; height:160px">
+                        <div class="card-img-overlay h-100 d-flex flex-column justify-content-end">
+                            <div class="   text-white font-weight-bolder" id="price-{{ item.id }}" style="font-size:26px">$ {{ item.item_price|floatformat:2 }}</div>
+                        </div>
+                    </div>
+                    <p class=" my-2 h5 text-center">{{ item.item_name}}</p>
+                    {% if item.item_type == 'Pinocchio Special' %}
+                        <p class=" ml-2 mr-2 text-muted text-justify" style="font-size: 14px;"> {{ item.item_description}}</p>
+                    {% endif %}
+                    <hr>
+                    <div class="row p-2 ">
+                        <div class="col">
+                            {% if item.item_type == 'Pinocchio Special' or item.item_type == 'Dinner Platters' %}
+                                <div class="input-group ">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text bg-success" >Size</label>
+                                    </div>
+                                    <select class="custom-select select-price" data-itemid="{{ item.id }}" data-itemtype="{{ item.item_type }}" data-itemname="{{ item.item_name }}" data-page="mainpage">
+                                        <option  value="Small" selected>Small</option>
+                                        <option  value="Large">Large</option>
+                                    </select>
+                                </div>
+                            {% endif%}
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-danger add-btn float-right update-cart" data-product="{{item.id}}" data-action="add" type="button" name="button">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-lg-4 p-4">
+                <div class="box-element-product">
+                    <div class="card ">
+                        <img class="card-img-top" src="{{ item.imageURL }}" style="width:100%; height:160px">
+                        <div class="card-img-overlay">
+                            <div class="d-flex flex-row-reverse">
+                                <div class="">
+                                    <button type="button" class="btn badge badge-success  d-inline float-right" data-toggle="modal" data-target="#Modal-{{ item.id }}">Customize &#10140;</button>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column bd-highlight mb-3">
+                                <div class="p-2 my-5 bd-highlight">
+                                    <div class=" text-white font-weight-bolder" id="price-{{ item.id }}" style="font-size:26px">$ {{ item.item_price }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class=" my-2 h5 text-center">{{ item.item_name}}</p>
+                    {% if item.item_type == 'Regular Pizza' or item.item_type == 'Sicilian Pizza' %}
+                        <p class="ml-2 mr-2  text-muted text-justify" style="font-size: 14px;"> {{ item.item_description}}</p>
+                    {% endif %}
+                    <hr>
+                    <div class="row p-2 ">
+                        <div class="col">
+                            <div class="input-group ">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text bg-success" for="inputGroupSelect01">Size</label>
+                                </div>
+                                <select class="custom-select select-price" data-itemid="{{ item.id }}" data-itemtype="{{ item.item_type }}" data-itemname="{{ item.item_name }}" data-page="mainpage">
+                                    <option  value="Small" selected>Small</option>
+                                    <option  value="Large">Large</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-danger add-btn float-right update-cart" data-product="{{item.id}}" data-action="add" type="button" name="button">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="modal" id="Modal-{{ item.id }}">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+        
+                        <div class="modal-header">
+                            <h5 class="modal-title text-danger">Make your Own {{ item.item_type}}!</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+        
+                        <div class="modal-body">
+                            <div class="card">
+                                <img class="card-img-top" src="{{ item.imageURL }}" style="width:100%; height:160px">
+                            </div>
+                            <p class="my-2 h5 text-center">{{ item.item_name}}</p>
+                            <hr>
+                            <div class="row  ">
+                                <div class="col ">
+                                    <div class="input-group  mb-1 ">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text bg-success">Size</label>
+                                        </div>
+                                        <select class="custom-select select-price" data-itemid="{{ item.id }}" data-itemtype="{{ item.item_type }}"  data-itemname="{{ item.item_name }}" data-page="modal">
+                                            <option value="Small" selected>Small</option>
+                                            <option value="Large">Large</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col ">
+                                    {% if item.item_type == 'Subs' %}
+                                        <button type="button" class="btn btn-success float-right" data-cheese="checkbox" data-checkid = "{{ item.id }}">Extra Cheese: $ 0.50</button>
+                                        <!-- <div class="btn-group-toggle float-right"  data-toggle="buttons" >
+                                            <label class="btn btn-outline-info" data-checkitemid = "{{ item.id }}">
+                                                <input type="checkbox" data-cheese="checkbox" data-checkid = "{{ item.id }}" >Extra Cheese: $ 0.50
+                                            </label>
+                                        </div> -->
+                                    {% else %}
+                                        <div class="input-group mb-1 ">
+                                            <div class="input-group-prepend ">
+                                                <label class="input-group-text bg-success">No of toppings</label>
+                                            </div>
+                                            <input class="form-control bg-white font-weight-bold" type="text" placeholder="{{ item.no_topping }}" readonly>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if  item.no_topping  >  0 %}
+                                <hr>
+                                <p class="my-2 mb-3 h5 text-center">Select Toppings </p>
+                                {% for i in item.no_topping|make_newlist %}
+                                    <div class="input-group mb-2 ">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text bg-success">Toppings</label>
+                                        </div>
+                                        <select class="custom-select"  name="topping">
+                                            {% for topping in toppings %}
+                                                <option value="{{ topping.item_name }}">{{ topping.item_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            <hr>
+                            <div class="row ">
+                                <div class="col">
+                                    <div class="input-group mb-1 ">
+                                        <div class="input-group-prepend ">
+                                            <label class="input-group-text bg-success" >Total</label>
+                                        </div>
+                                        <input class="form-control bg-white font-weight-bold" id= "modalprice-{{ item.id }}" type="text" placeholder="$ {{ item.item_price }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <button class="btn btn-outline-danger add-btn float-right update-cart " id="modaladd-{{item.id}}" data-product="{{item.id}}" data-action="add" type="button" name="button">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+    </div>
+    {% endfor %}
+
+{% endblock content %}
